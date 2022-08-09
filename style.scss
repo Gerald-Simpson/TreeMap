@@ -1,0 +1,43 @@
+/** @format */
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-size: 18px;
+	font-family: calibri;
+}
+
+#container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	#title {
+		font-size: 1.8rem;
+		font-weight: 600;
+		padding: 20px;
+	}
+	#description {
+		font-size: 1.2rem;
+		font-weight: 600;
+	}
+}
+
+#chart {
+	#tooltip {
+		position: absolute;
+		background-color: #fdd8a9;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		width: fit-content;
+		height: fit-content;
+		font-size: 0.8rem;
+		font-weight: 400;
+		padding: 5px 10px;
+	}
+}

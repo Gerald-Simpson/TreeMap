@@ -36,4 +36,51 @@ fetch(DATA)
 		let keys = [...new Set(jsonData.children.map((object) => object.name))];
 
 		let colorScale = d3.scaleOrdinal().domain(keys).range(colors);
+
+		let svg = d3
+			.select("#chart")
+			.append("svg")
+			.attr("width", w)
+			.attr("height", h);
+
+		let hierarchyData = d3.hierarchy(jsonData);
+
+		console.log(jsonData);
+		console.log(hierarchyData);
+
+		hierarchyData = hierarchyData
+			.copy()
+			.sum((d) => d.value)
+			.sort(
+				(a, b) =>
+					d3.descending(a.data.category, b.data.category) ||
+					d3.descending(a.value, b.value)
+			);
+		console.log(hierarchyData);
+
+		d3.treemap().size([w, h])(hierarchyData);
+
+		/*let fullTreeMap = treeMap(hierarchyData, {
+			value: (d) => d.value,
+			group: (d, n) => n.ancestors().slice(-2)[0].data.name,
+			label: (d, n) => d.name,
+			width: w,
+			height: h,
+		});*/
+
+		//svg.append("rect").attr("width", w).attr("height", h).attr("fill", "pink");
+
+		//svg.selectAll("g").data(hierarchyData.leaves()).enter().append("g"));
+		console.log(hierarchyData.leaves());
+		svg
+			.selectAll("rect")
+			.data(hierarchyData.leaves())
+			.enter()
+			.append("rect")
+			.attr("x", (d) => d.x0)
+			.attr("y", (d) => d.y0)
+			.attr("width", (d) => d.x1 - d.x0)
+			.attr("height", (d) => d.y1 - d.y0)
+			.attr("stroke", "white")
+			.attr("fill", (d) => colorScale(d.data.category));
 	});

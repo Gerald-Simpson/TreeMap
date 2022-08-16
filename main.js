@@ -45,9 +45,6 @@ fetch(DATA)
 
 		let hierarchyData = d3.hierarchy(jsonData);
 
-		console.log(jsonData);
-		console.log(hierarchyData);
-
 		hierarchyData = hierarchyData
 			.copy()
 			.sum((d) => d.value)
@@ -60,18 +57,6 @@ fetch(DATA)
 
 		d3.treemap().size([w, h])(hierarchyData);
 
-		/*let fullTreeMap = treeMap(hierarchyData, {
-			value: (d) => d.value,
-			group: (d, n) => n.ancestors().slice(-2)[0].data.name,
-			label: (d, n) => d.name,
-			width: w,
-			height: h,
-		});*/
-
-		//svg.append("rect").attr("width", w).attr("height", h).attr("fill", "pink");
-
-		//svg.selectAll("g").data(hierarchyData.leaves()).enter().append("g"));
-		console.log(hierarchyData.leaves());
 		svg
 			.selectAll("rect")
 			.data(hierarchyData.leaves())

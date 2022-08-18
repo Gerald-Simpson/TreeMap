@@ -19,7 +19,6 @@ let colors = [
 	"#aaffc3",
 	"#808000",
 	"#ffd8b1",
-	"#000075",
 	"#808080",
 	"#ffffff",
 ];
@@ -40,6 +39,7 @@ fetch(DATA)
 		let svg = d3
 			.select("#chart")
 			.append("svg")
+			.attr("id", "svg")
 			.attr("width", w)
 			.attr("height", h);
 
@@ -53,19 +53,86 @@ fetch(DATA)
 					d3.descending(a.data.category, b.data.category) ||
 					d3.descending(a.value, b.value)
 			);
-		console.log(hierarchyData);
 
 		d3.treemap().size([w, h])(hierarchyData);
 
-		svg
-			.selectAll("rect")
+		textSplitter = function (string) {
+			let strArr = string.split(" ");
+			let newArr = [];
+			for (let i = 0; i < strArr.length; i++) {
+				if (i % 2 === 0 && i < strArr.length - 1) {
+					newArr.push(strArr[i].concat(" " + strArr[i + 1]));
+				} else if (i === strArr.length - 1 && i % 2 === 0) {
+					newArr.push(strArr[i]);
+				}
+			}
+			return newArr;
+		};
+
+		let svgB = svg
+			.selectAll("g")
 			.data(hierarchyData.leaves())
 			.enter()
+			.append("g")
+			.attr("transform", function (d) {
+				return "translate(" + d.x0 + "," + d.y0 + ")";
+			});
+		//.attr("x", (d) => d.x0)
+		//.attr("y", (d) => d.y0);
+
+		svgB
 			.append("rect")
-			.attr("x", (d) => d.x0)
-			.attr("y", (d) => d.y0)
+			.attr("class", "tile")
+			.attr("data-name", (d) => d.data.name)
+			.attr("data-category", (d) => d.data.category)
+			.attr("data-value", (d) => d.value)
+			.attr("stroke", "white")
+			.attr("fill", (d) => colorScale(d.data.category))
 			.attr("width", (d) => d.x1 - d.x0)
 			.attr("height", (d) => d.y1 - d.y0)
-			.attr("stroke", "white")
-			.attr("fill", (d) => colorScale(d.data.category));
+			.on("mouseover", handleMouseOver)
+			.on("mouseout", handleMouseOut);
+
+		function handleMouseOver(event, d) {
+			d3.select("#tooltip")
+				.attr("data-value", d.value)
+				.style("left", event.pageX + "px")
+				.style("top", event.pageY + "px")
+				.style("opacity", 0.8)
+				.html(
+					"Name: " +
+						d.data.name +
+						"<br>Category: " +
+						d.data.category +
+						"<br>Value: " +
+						d.value
+				);
+		}
+
+		function handleMouseOut(event, d) {
+			d3.select("#tooltip").style("opacity", 0);
+		}
+
+		let tooltip = d3
+			.select("#chart")
+			.append("div")
+			.attr("id", "tooltip")
+			.style("opacity", 0);
+
+		svgB
+			.append("text")
+			.selectAll("tspan")
+			.data(function (d) {
+				return textSplitter(d.data.name);
+			})
+			.enter()
+			.append("tspan")
+			.attr("class", "rectLabel")
+			.attr("x", 5)
+			.attr("y", function (d, i) {
+				return 15 + i * 10;
+			})
+			.text(function (d) {
+				return d;
+			});
 	});

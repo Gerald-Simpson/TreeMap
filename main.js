@@ -78,8 +78,6 @@ fetch(DATA)
 			.attr("transform", function (d) {
 				return "translate(" + d.x0 + "," + d.y0 + ")";
 			});
-		//.attr("x", (d) => d.x0)
-		//.attr("y", (d) => d.y0);
 
 		svgB
 			.append("rect")

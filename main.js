@@ -151,6 +151,7 @@ fetch(DATA)
 			.data(keys)
 			.enter()
 			.append("rect")
+			.attr("class", "legend-item")
 			.attr("x", (d, i) => {
 				return 0.35 * w + (i % 3) * 150;
 			})

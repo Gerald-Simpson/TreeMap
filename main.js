@@ -30,7 +30,8 @@ fetch(DATA)
 	.then((data) => data.json())
 	.then((jsonData) => {
 		var w = 1000,
-			h = 600;
+			h = 600,
+			legendSize = 15;
 
 		let keys = [...new Set(jsonData.children.map((object) => object.name))];
 
@@ -77,8 +78,6 @@ fetch(DATA)
 			.attr("transform", function (d) {
 				return "translate(" + d.x0 + "," + d.y0 + ")";
 			});
-		//.attr("x", (d) => d.x0)
-		//.attr("y", (d) => d.y0);
 
 		svgB
 			.append("rect")
@@ -135,4 +134,43 @@ fetch(DATA)
 			.text(function (d) {
 				return d;
 			});
+
+		let svgLegend = d3
+			.select("#chart")
+			.append("svg")
+			.attr("id", "legendSvg")
+			.attr("width", w)
+			.attr("height", h);
+
+		let legend = svgLegend.append("g").attr("id", "legend");
+
+		legend
+			.selectAll("rect")
+			.data(keys)
+			.enter()
+			.append("rect")
+			.attr("class", "legend-item")
+			.attr("x", (d, i) => {
+				return 0.35 * w + (i % 3) * 150;
+			})
+			.attr("y", function (d, i) {
+				return 20 + Math.floor(i / 3) * 30;
+			})
+			.attr("width", legendSize)
+			.attr("height", legendSize)
+			.attr("fill", (d) => colorScale(d));
+
+		legend
+			.selectAll("text")
+			.data(keys)
+			.enter()
+			.append("text")
+			.attr("class", "legendText")
+			.attr("x", (d, i) => {
+				return legendSize + 5 + 0.35 * w + (i % 3) * 150;
+			})
+			.attr("y", function (d, i) {
+				return legendSize - 3 + 20 + Math.floor(i / 3) * 30;
+			})
+			.text((d) => d);
 	});
